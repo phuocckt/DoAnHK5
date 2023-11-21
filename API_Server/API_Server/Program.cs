@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddIdentity<User, IdentityRole>()
-				.AddEntityFrameworkStores<API_ServerContext>()
+				.AddEntityFrameworkStores<>()
 				.AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options =>
