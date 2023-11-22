@@ -4,9 +4,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using API_Server.Data;
 using API_Server.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<API_ServerContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("API_ServerContext") ?? throw new InvalidOperationException("Connection string 'API_ServerContext' not found.")));
 // Add services to the container.
 
 builder.Services.AddIdentity<User, IdentityRole>()
