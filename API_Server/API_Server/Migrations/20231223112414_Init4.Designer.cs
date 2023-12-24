@@ -4,6 +4,7 @@ using API_Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API_Server.Migrations
 {
     [DbContext(typeof(API_ServerContext))]
-    partial class API_ServerContextModelSnapshot : ModelSnapshot
+    [Migration("20231223112414_Init4")]
+    partial class Init4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,9 +70,14 @@ namespace API_Server.Migrations
                     b.Property<string>("SKU")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("StyleId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductTypeId");
+
+                    b.HasIndex("StyleId");
 
                     b.ToTable("Clothes");
                 });
@@ -386,6 +393,22 @@ namespace API_Server.Migrations
                     b.ToTable("Size");
                 });
 
+            modelBuilder.Entity("API_Server.Models.Style", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Style");
+                });
+
             modelBuilder.Entity("API_Server.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -652,7 +675,13 @@ namespace API_Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("API_Server.Models.Style", "Style")
+                        .WithMany()
+                        .HasForeignKey("StyleId");
+
                     b.Navigation("ProductType");
+
+                    b.Navigation("Style");
                 });
 
             modelBuilder.Entity("API_Server.Models.Comment", b =>

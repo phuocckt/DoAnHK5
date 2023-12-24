@@ -52,7 +52,15 @@ namespace API_Server.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(color).State = EntityState.Modified;
+			var existingColor = await _context.Color
+												.FirstOrDefaultAsync(p => p.Name == color.Name && p.Id != id);
+			if (existingColor != null)
+			{
+				ModelState.AddModelError("Name", "Tên màu đã tồn tại. Vui lòng chọn tên khác.");
+				return BadRequest(ModelState);
+			}
+
+			_context.Entry(color).State = EntityState.Modified;
 
             try
             {
@@ -78,6 +86,12 @@ namespace API_Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Color>> PostColor(Color color)
         {
+            if (_context.Color.Any(p => p.Name == color.Name))
+			{
+				ModelState.AddModelError("Name", "Tên màu đã tồn tại. Vui lòng chọn tên khác.");
+				return BadRequest(ModelState);
+			}
+
             _context.Color.Add(color);
             await _context.SaveChangesAsync();
 

@@ -25,7 +25,7 @@ namespace API_Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Clothes>>> GetClothes()
         {
-            return await _context.Clothes.ToListAsync();
+            return await _context.Clothes.Include(p => p.ProductType).ToListAsync();
         }
 
         // GET: api/Clothes/5
@@ -52,7 +52,15 @@ namespace API_Server.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(clothes).State = EntityState.Modified;
+			var existingColor = await _context.Clothes
+												.FirstOrDefaultAsync(p => p.Name == clothes.Name && p.Id != id);
+			if (existingColor != null)
+			{
+				ModelState.AddModelError("Name", "Tên sản phẩm đã tồn tại. Vui lòng chọn tên khác.");
+				return BadRequest(ModelState);
+			}
+
+			_context.Entry(clothes).State = EntityState.Modified;
 
             try
             {
@@ -78,7 +86,13 @@ namespace API_Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Clothes>> PostClothes(Clothes clothes)
         {
-            _context.Clothes.Add(clothes);
+			if (_context.Clothes.Any(p => p.Name == clothes.Name))
+			{
+				ModelState.AddModelError("Name", "Tên sản phẩm đã tồn tại. Vui lòng chọn tên khác.");
+				return BadRequest(ModelState);
+			}
+
+			_context.Clothes.Add(clothes);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetClothes", new { id = clothes.Id }, clothes);

@@ -7,8 +7,9 @@
 		public int ClothesId { get; set; }
 		public int SizeId { get; set; }
 		public int ColorId { get; set; }
+		public int ImageId { get; set; }
 		public int Stock {  get; set; }
-		public int RateId { get; set; }
+		public int? RateId { get; set; }
 		public bool Status { get; set; }
 		public Size Size { get; set; }
 		public Clothes Clothes { get; set; }

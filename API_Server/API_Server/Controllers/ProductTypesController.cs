@@ -51,8 +51,15 @@ namespace API_Server.Controllers
             {
                 return BadRequest();
             }
+			var existingProduct = await _context.ProductType
+		                                        .FirstOrDefaultAsync(p => p.Name == productType.Name && p.Id != id);
+			if (existingProduct != null)
+			{
+				ModelState.AddModelError("Name", "Tên sản phẩm đã tồn tại. Vui lòng chọn tên khác.");
+				return BadRequest(ModelState);
+			}
 
-            _context.Entry(productType).State = EntityState.Modified;
+			_context.Entry(productType).State = EntityState.Modified;
 
             try
             {
@@ -78,7 +85,13 @@ namespace API_Server.Controllers
         [HttpPost]
         public async Task<ActionResult<ProductType>> PostProductType(ProductType productType)
         {
-            _context.ProductType.Add(productType);
+			if (_context.ProductType.Any(p => p.Name == productType.Name))
+			{
+				ModelState.AddModelError("Name", "Tên sản phẩm đã tồn tại. Vui lòng chọn tên khác.");
+				return BadRequest(ModelState);
+			}
+
+			_context.ProductType.Add(productType);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProductType", new { id = productType.Id }, productType);

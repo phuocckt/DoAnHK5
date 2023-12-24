@@ -4,6 +4,7 @@ using API_Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API_Server.Migrations
 {
     [DbContext(typeof(API_ServerContext))]
-    partial class API_ServerContextModelSnapshot : ModelSnapshot
+    [Migration("20231211053118_Init3")]
+    partial class Init3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,6 +61,9 @@ namespace API_Server.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ImageId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -68,9 +73,14 @@ namespace API_Server.Migrations
                     b.Property<string>("SKU")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("StyleId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductTypeId");
+
+                    b.HasIndex("StyleId");
 
                     b.ToTable("Clothes");
                 });
@@ -167,6 +177,10 @@ namespace API_Server.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique()
+                        .HasFilter("[ProductId] IS NOT NULL");
 
                     b.ToTable("Image");
                 });
@@ -279,12 +293,6 @@ namespace API_Server.Migrations
                     b.Property<int>("ColorId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ImageId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ImageId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
@@ -305,8 +313,6 @@ namespace API_Server.Migrations
                     b.HasIndex("ClothesId");
 
                     b.HasIndex("ColorId");
-
-                    b.HasIndex("ImageId1");
 
                     b.HasIndex("SizeId");
 
@@ -384,6 +390,22 @@ namespace API_Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Size");
+                });
+
+            modelBuilder.Entity("API_Server.Models.Style", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Style");
                 });
 
             modelBuilder.Entity("API_Server.Models.User", b =>
@@ -652,7 +674,13 @@ namespace API_Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("API_Server.Models.Style", "Style")
+                        .WithMany()
+                        .HasForeignKey("StyleId");
+
                     b.Navigation("ProductType");
+
+                    b.Navigation("Style");
                 });
 
             modelBuilder.Entity("API_Server.Models.Comment", b =>
@@ -687,6 +715,13 @@ namespace API_Server.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("API_Server.Models.Image", b =>
+                {
+                    b.HasOne("API_Server.Models.Product", null)
+                        .WithOne("Image")
+                        .HasForeignKey("API_Server.Models.Image", "ProductId");
                 });
 
             modelBuilder.Entity("API_Server.Models.Invoice", b =>
@@ -747,10 +782,6 @@ namespace API_Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API_Server.Models.Image", "Image")
-                        .WithMany()
-                        .HasForeignKey("ImageId1");
-
                     b.HasOne("API_Server.Models.Size", "Size")
                         .WithMany()
                         .HasForeignKey("SizeId")
@@ -760,8 +791,6 @@ namespace API_Server.Migrations
                     b.Navigation("Clothes");
 
                     b.Navigation("Color");
-
-                    b.Navigation("Image");
 
                     b.Navigation("Size");
                 });
@@ -832,6 +861,11 @@ namespace API_Server.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("API_Server.Models.Product", b =>
+                {
+                    b.Navigation("Image");
                 });
 #pragma warning restore 612, 618
         }

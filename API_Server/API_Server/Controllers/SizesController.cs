@@ -52,7 +52,15 @@ namespace API_Server.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(size).State = EntityState.Modified;
+			var existingSize = await _context.Size
+												.FirstOrDefaultAsync(p => p.Name == size.Name && p.Id != id);
+			if (existingSize != null)
+			{
+				ModelState.AddModelError("Name", "Tên size đã tồn tại. Vui lòng chọn tên khác.");
+				return BadRequest(ModelState);
+			}
+
+			_context.Entry(size).State = EntityState.Modified;
 
             try
             {
@@ -78,7 +86,13 @@ namespace API_Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Size>> PostSize(Size size)
         {
-            _context.Size.Add(size);
+			if (_context.Size.Any(p => p.Name == size.Name))
+			{
+				ModelState.AddModelError("Name", "Tên size đã tồn tại. Vui lòng chọn tên khác.");
+				return BadRequest(ModelState);
+			}
+
+			_context.Size.Add(size);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetSize", new { id = size.Id }, size);

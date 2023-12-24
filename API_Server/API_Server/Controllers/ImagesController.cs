@@ -52,7 +52,15 @@ namespace API_Server.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(image).State = EntityState.Modified;
+			var existingImage = await _context.Image
+												.FirstOrDefaultAsync(p => p.Name == image.Name && p.Id != id && p.ProductId == image.ProductId);
+			if (existingImage != null)
+			{
+				ModelState.AddModelError("Name", "Tên sản phẩm đã tồn tại. Vui lòng chọn tên khác.");
+				return BadRequest(ModelState);
+			}
+
+			_context.Entry(image).State = EntityState.Modified;
 
             try
             {
@@ -78,7 +86,12 @@ namespace API_Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Image>> PostImage(Image image)
         {
-            _context.Image.Add(image);
+			if (_context.Image.Any(p => p.Name == image.Name))
+			{
+				ModelState.AddModelError("Name", "Tên ảnh đã tồn tại. Vui lòng chọn tên khác.");
+				return BadRequest(ModelState);
+			}
+			_context.Image.Add(image);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetImage", new { id = image.Id }, image);
