@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API_Server.Data;
 using API_Server.Models;
+using Microsoft.Extensions.Hosting;
 
 namespace API_Server.Controllers
 {
@@ -15,17 +16,23 @@ namespace API_Server.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly API_ServerContext _context;
+		private readonly IWebHostEnvironment _environment;
 
-        public ProductsController(API_ServerContext context)
+		public ProductsController(API_ServerContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
         {
-            return await _context.Product.ToListAsync();
+            return await _context.Product.Include(p => p.Clothes)
+	                                    .Include(p => p.Color)
+	                                    .Include(p => p.Image)
+                                        .Include(p => p.Size)
+                                        .ToListAsync();
         }
 
         // GET: api/Products/5
@@ -78,7 +85,14 @@ namespace API_Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
-            _context.Product.Add(product);
+			//var fileName = product.Id.ToString() + Path.GetExtension(product.ImageFile.FileName);
+			//var uploadFolder = Path.Combine(_environment.WebRootPath, "images", "product");
+			//var uploadPath = Path.Combine(uploadFolder, fileName);
+   //         using( var stream = System.IO.File.Create(uploadPath))
+   //         {
+   //             await product.ImageFile.CopyToAsync(stream);
+   //         }
+			_context.Product.Add(product);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);

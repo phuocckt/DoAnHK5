@@ -1,4 +1,6 @@
-﻿namespace API_Server.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace API_Server.Models
 {
 	public class Product
 	{

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API_Server.Data;
 using API_Server.Models;
+using Microsoft.Extensions.Hosting;
 
 namespace API_Server.Controllers
 {
@@ -15,11 +16,13 @@ namespace API_Server.Controllers
     public class ImagesController : ControllerBase
     {
         private readonly API_ServerContext _context;
+		private readonly IWebHostEnvironment _environment;
 
-        public ImagesController(API_ServerContext context)
+		public ImagesController(API_ServerContext context, IWebHostEnvironment environment)
         {
             _context = context;
-        }
+			_environment = environment;
+		}
 
         // GET: api/Images
         [HttpGet]
@@ -62,7 +65,7 @@ namespace API_Server.Controllers
 
 			_context.Entry(image).State = EntityState.Modified;
 
-            try
+			try
             {
                 await _context.SaveChangesAsync();
             }
@@ -84,17 +87,23 @@ namespace API_Server.Controllers
         // POST: api/Images
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Image>> PostImage(Image image)
+        public async Task<ActionResult<Image>> PostImage([FromForm] Image image)
         {
-			if (_context.Image.Any(p => p.Name == image.Name))
-			{
-				ModelState.AddModelError("Name", "Tên ảnh đã tồn tại. Vui lòng chọn tên khác.");
-				return BadRequest(ModelState);
-			}
+			image.Name = "";
 			_context.Image.Add(image);
             await _context.SaveChangesAsync();
+			var fileName = image.Id.ToString() + Path.GetExtension(image.NameFile.FileName);
+			var uploadFolder = Path.Combine(_environment.WebRootPath, "images", "product");
+			var uploadPath = Path.Combine(uploadFolder, fileName);
+			using (var stream = System.IO.File.Create(uploadPath))
+			{
+				await image.NameFile.CopyToAsync(stream);
+			}
+            image.Name = fileName;
+			_context.Image.Update(image);
+			await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetImage", new { id = image.Id }, image);
+			return CreatedAtAction("GetImage", new { id = image.Id }, image);
         }
 
         // DELETE: api/Images/5
