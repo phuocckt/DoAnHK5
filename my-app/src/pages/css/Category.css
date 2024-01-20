@@ -1,0 +1,24 @@
+.category-products{
+    margin:0 100px;
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+}
+.product-type{
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+}
+.product-type li{
+    margin: 10px 10px;
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    padding-right: 20px;
+}
+.product-type li:last-child{
+    border: none;
+}
+.product-type li a{
+    color: white;
+    text-decoration: none;
+}

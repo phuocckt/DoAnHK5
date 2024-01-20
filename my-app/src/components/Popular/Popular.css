@@ -1,0 +1,48 @@
+.popular{
+    margin: 0 100px;
+}
+.popular h1{
+    font-family: 'Lobster', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 30px 20px;
+    padding: 20px;
+    position: relative;
+}
+.popular h1::before{
+    width: 400px;
+    height: 5px;
+    position: absolute;
+    content: "";
+    background-color: rgba(0, 0, 0, 0.3);
+    bottom: 0;
+    border-radius: 20px;
+}
+.popular .product_list{
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+}
+.popular button{
+    font-family: 'Lobster', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px auto;
+    font-size: 25px;
+    border-radius: 40px;
+    padding: 10px 30px;
+}
+.popular button i{
+    margin-left: 15px;
+    transition: .5s;
+    animation: 1s abc linear infinite;
+}
+@keyframes abc{
+    100%{
+        transform: translateX(10px);    
+    } 
+}
