@@ -10,8 +10,8 @@ function Signup() {
             <form>
                 <input type='text' placeholder='Your name'/>
                 <input type='email' placeholder='Email address'/>
-                <input type='password' placeholder='Password'/>
-                <input type='password' placeholder='Re - Password'/>
+                <input type='password' placeholder='Enter the Password'/>
+                <input type='password' placeholder='Confirm the Password'/>
             </form>
             <button>Sign up</button>
             <p>Already have an account ? <Link to='/login' className='text-danger'>Login here</Link></p>
