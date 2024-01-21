@@ -45,6 +45,7 @@ const SizeList = () => {
     const sizeData = {...sizes};
     setIsAddSuccess(false);
     setShowAdd(false);
+    console.log({...sizeData});
     axiosAdmin.post("/Sizes", sizeData)
       .then(() => {
 

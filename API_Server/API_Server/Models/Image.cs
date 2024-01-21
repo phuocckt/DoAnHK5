@@ -9,6 +9,7 @@ namespace API_Server.Models
 		[NotMapped]
 		public IFormFile NameFile { get; set; }
 		public bool Status { get; set; }
+		[ForeignKey("ProductId")]
 		public int? ProductId { get; set; }
 	}
 }

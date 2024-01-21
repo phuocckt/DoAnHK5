@@ -85,13 +85,6 @@ namespace API_Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
-			//var fileName = product.Id.ToString() + Path.GetExtension(product.ImageFile.FileName);
-			//var uploadFolder = Path.Combine(_environment.WebRootPath, "images", "product");
-			//var uploadPath = Path.Combine(uploadFolder, fileName);
-   //         using( var stream = System.IO.File.Create(uploadPath))
-   //         {
-   //             await product.ImageFile.CopyToAsync(stream);
-   //         }
 			_context.Product.Add(product);
             await _context.SaveChangesAsync();
 

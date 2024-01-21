@@ -6,8 +6,9 @@ import { faCheck, faClose, faPen, faPlus, faTrash } from '@fortawesome/free-soli
 
 const Products = () => {
   const [products, setProduct] = useState([]);
-  const [sizes, setSize] = useState([]);
-  const [colors, setColor] = useState([]);
+  const [size, setSize] = useState([]);
+  const [color, setColor] = useState([]);
+  const [images, setImage] = useState([]);
   const [showAdd, setShowAdd] = useState(false);
   const [isAddSuccess, setIsAddSuccess] = useState(false);
   const [notification, setNotification] = useState(null);
@@ -23,6 +24,11 @@ const Products = () => {
     rateId: null,
     status: false
   });
+  const [newVariant, setNewVariant] = useState({
+    sizeId: [],
+    colorId: [],
+    imageId: [],
+  });
   const [isEditing, setIsEditing] = useState(false);
   //const [selectedProductType, setSelectedProductType] = useState('');
 
@@ -30,6 +36,11 @@ const Products = () => {
   const handleShowAdd = () => {
     setShowAdd(true);
     setIsAddSuccess(true);
+  }
+  const handleCheck = (e) => {
+    let name = e.target.name;
+    let value = e.target.checked;
+    setProduct(prev => ({ ...prev, [name]: value }));
   }
   const handleClose = () => { setShowAdd(false); }
   const handleChange = (e) => {
@@ -46,20 +57,30 @@ const Products = () => {
       ...prevClothes,
       [name]: newValue
     }));
+    setNewVariant(prevVariant => ({
+      ...prevVariant,
+      [name]: Array.isArray(prevVariant[name]) ? [...prevVariant[name], newValue] : [newValue],
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const productsData = { ...products };
+    const variantData = { ...newVariant };
     setIsAddSuccess(false);
     setShowAdd(false);
-    console.log({ ...productsData });
-    axiosAdmin.post("/Products", productsData)
+    console.log({ ...variantData });
+    axiosAdmin.post("/Products", variantData)
       .then(() => {
 
         setIsAddSuccess(false);
         setShowAdd(false);
         setNotification('Thêm sản phẩm thành công');
+        setProduct(prevVariants => [...prevVariants, variantData]);
+        setNewVariant({
+          sizeId: null,
+          colorId: null,
+          imageId: null,
+        });
       })
       .catch((error) => {
         setNotification('Lỗi khi thêm');
@@ -103,8 +124,8 @@ const Products = () => {
           id: null,
           price: null,
           clothesId: null,
-          sizeId: [],
-          colorId: [],
+          sizeId: null,
+          colorId: null,
           imageId: null,
           stock: null,
           rateId: null,
@@ -123,8 +144,8 @@ const Products = () => {
       id: null,
       price: null,
       clothesId: null,
-      sizeId: [],
-      colorId: [],
+      sizeId: null,
+      colorId: null,
       imageId: null,
       stock: null,
       rateId: null,
@@ -162,10 +183,23 @@ const Products = () => {
       .then(res => {
         setSize(res.data);
       })
-      axiosAdmin.get("/Colors")
+      .catch(error => {
+        console.error("Error fetching sizes data:", error);
+      });
+    axiosAdmin.get("/Colors")
       .then(res => {
         setColor(res.data);
       })
+      .catch(error => {
+        console.error("Error fetching colors data:", error);
+      });
+      axiosAdmin.get("/Images")
+      .then(res => {
+        setImage(res.data);
+      })
+      .catch(error => {
+        console.error("Error fetching colors data:", error);
+      });
   }, [notification]);
   return (
     <div>
@@ -188,36 +222,62 @@ const Products = () => {
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Sizes:</Form.Label>
-              <Form.Select
-                aria-label="Size"
+              <Form.Control
+                as="select"
+                multiple
                 name="sizeId"
-                value={products.sizeId}
                 onChange={handleChange}
+                value={newVariant.sizeId || []}
               >
-                <option>Chọn size</option>
-                {sizes.map(item => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
+                {size.map(size => (
+                  <option key={size.id} value={size.id}>
+                    {size.name}
                   </option>
                 ))}
-              </Form.Select>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Images:</Form.Label>
+              <Form.Control
+                as="select"
+                multiple
+                name="imageId"
+                onChange={handleChange}
+                value={newVariant.imageId || []}
+              >
+                {images.map(images => (
+                  <option key={images.id} value={images.id}>
+                    {images.productId}
+                  </option>
+                ))}
+              </Form.Control>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Colors:</Form.Label>
-              <Form.Select
-                aria-label="Color"
+              <Form.Control
+                as="select"
+                multiple
                 name="colorId"
-                value={products.colorId}
                 onChange={handleChange}
+                value={newVariant.colorId || []}
               >
-                <option>Chọn màu</option>
-                {colors.map(item => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
+                {color.map(color => (
+                  <option key={color.id} value={color.id}>
+                    {color.name}
                   </option>
                 ))}
-              </Form.Select>
+              </Form.Control>
             </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Stock:</Form.Label>
+              <Form.Control type="number" name="stock" onChange={handleChange} placeholder='Nhập số lượng' min={1} required />
+            </Form.Group>
+            <Form.Check
+              type="switch"
+              name="status"
+              label="Hoạt động"
+              onClick={handleCheck}
+            />
             <Button type="submit" variant='success'>
               <FontAwesomeIcon icon={faPlus} /> Thêm
             </Button>
@@ -327,4 +387,4 @@ const Products = () => {
   )
 }
 
-export default Products;
+export default Products; 

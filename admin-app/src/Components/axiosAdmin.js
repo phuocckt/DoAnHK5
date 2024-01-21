@@ -13,7 +13,7 @@ axiosAdmin.interceptors.response.use(
     res => res,
     error => {
         if (error.response.status === 401) {
-            window.location.href = `http://localhost:3000/`;
+            window.location.href = `http://localhost:3000/login-admin`;
         }
         console.error(`Error! Status Code: ` + error.response.status);
         return Promise.reject(error);

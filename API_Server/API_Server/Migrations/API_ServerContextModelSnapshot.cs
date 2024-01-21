@@ -394,9 +394,6 @@ namespace API_Server.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("BirthDay")
                         .HasColumnType("datetime2");
 
