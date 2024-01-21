@@ -1,14 +1,12 @@
-import logo from './logo.svg';
-import './App.css';
-import Navbar from './components/Navbar';
-import SlideShow from './components/SlideShow';
+import Header from './components/Header';
 import Footer from './components/Footer';
+import { Outlet } from 'react-router-dom';
 
 function Layout() {
   return (
     <>
-        <Navbar/>
-        <SlideShow/>
+        <Header/>
+        <Outlet/>
         <Footer/>
     </>
   );
