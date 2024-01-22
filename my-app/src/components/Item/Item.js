@@ -11,7 +11,7 @@ function Item(props) {
         <div className='card'>
            <Link className='text-decoration-none' to={`/product/${props.id}`}>
              {/* <img src='https://chiinstore.com/media/product/3250_634x634__4_.png' /> */}
-             <img src={props.image} />
+             <img src={`https://localhost:7258/images/product/${props.image}.jpg`} />
            </Link>
            
             <div className='content'>
@@ -24,7 +24,7 @@ function Item(props) {
               </div>
               {/* <p className='name_product'>{props.name}</p> */}
               <div className='price'>
-                <div className='new-price'>${props.new_price}</div>
+                <div className='new-price'>${props.price}</div>
                 <div className='old-price'>${props.old_price}</div>
               </div>
               <div className='utilities'>

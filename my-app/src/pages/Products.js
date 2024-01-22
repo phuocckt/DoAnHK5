@@ -1,15 +1,33 @@
-// import Product from '../components/Product';
-import { useParams } from "react-router-dom";
-import all_product from "../components/Assets/all_product";
-import ItemDetail from "../components/ItemDetail/ItemDetail";
+// import ProductsAPI from '../api/productAPI';
+import { useEffect, useState } from "react";
+import axiosClient from "../api/axiosClient";
+import Item from "../components/Item/Item";
 
 function Products() {
-  const {productId} = useParams();
-  const product = all_product.find((e)=>e.id === Number(productId))
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    axiosClient.get("/Products")
+      .then(res => {
+        setProducts(res.data)
+      });
+  }, []);
+  console.log(products);
 
   return (
     <>
-        <ItemDetail product={product} />  
+      <div className="category-products">
+      {
+          products.map((item,i)=>{
+            if(i > 0 && (item.clothesId === products[i - 1].clothesId)){
+              i++;
+            }else{
+              return <Item id={item.id} name={item.name} image={item.imageId} price={item.price}/>;
+            }  
+            
+          })
+      }
+      </div>
+      
     </>
   );
 }

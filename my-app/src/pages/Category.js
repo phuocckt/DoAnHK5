@@ -3,6 +3,7 @@ import './css/Category.css';
 import { ShopContext } from '../Context/ShopContext';
 import Item from '../components/Item/Item';
 import { Link } from 'react-router-dom';
+import products from '../api/productAPI';
 
 
 function Category(props) {

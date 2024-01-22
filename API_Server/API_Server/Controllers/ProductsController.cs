@@ -39,7 +39,11 @@ namespace API_Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await _context.Product.FindAsync(id);
+            var product = await _context.Product.Where(p => p.Id == id).Include(p => p.Clothes)
+                                                .Include(p => p.Color)
+                                                .Include(p => p.Image)
+                                                .Include(p => p.Size)
+                                                .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
             {

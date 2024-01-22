@@ -2,7 +2,7 @@ import './Popular.css'
 import Item from '../Item/Item'
 import data_product from '../Assets/data'
 import { useEffect, useState } from 'react';
-import productApi from '../../api/productApi';
+import productApi from '../../api/productAPI';
 import axiosClient from '../../api/axiosClient';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
