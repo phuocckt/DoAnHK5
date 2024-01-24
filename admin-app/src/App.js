@@ -1,8 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
-import ResetPassword from './pages/ResetPassword';
-import ForgotPassword from './pages/ForgotPassword';
 import MainLayout from './Components/MainLayout';
 import Dashboard from './pages/Dashboard';
 import './App.css'
@@ -24,8 +22,6 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/login-admin" element={<Login />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/admin" element={<MainLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="enquiries" element={<Enquiries />} />

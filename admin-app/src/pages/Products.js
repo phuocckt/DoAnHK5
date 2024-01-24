@@ -8,6 +8,7 @@ const Products = () => {
   const [products, setProduct] = useState([]);
   const [size, setSize] = useState([]);
   const [color, setColor] = useState([]);
+  const [clothes, setClothes] = useState([]);
   const [images, setImage] = useState([]);
   const [showAdd, setShowAdd] = useState(false);
   const [isAddSuccess, setIsAddSuccess] = useState(false);
@@ -17,17 +18,12 @@ const Products = () => {
     id: null,
     price: null,
     clothesId: null,
-    sizeId: [],
-    colorId: [],
+    sizeId: null,
+    colorId: null,
     imageId: null,
     stock: null,
     rateId: null,
     status: false
-  });
-  const [newVariant, setNewVariant] = useState({
-    sizeId: [],
-    colorId: [],
-    imageId: [],
   });
   const [isEditing, setIsEditing] = useState(false);
   //const [selectedProductType, setSelectedProductType] = useState('');
@@ -57,40 +53,29 @@ const Products = () => {
       ...prevClothes,
       [name]: newValue
     }));
-    setNewVariant(prevVariant => ({
-      ...prevVariant,
-      [name]: Array.isArray(prevVariant[name]) ? [...prevVariant[name], newValue] : [newValue],
-    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const variantData = { ...newVariant };
+    const productData = { ...products };
     setIsAddSuccess(false);
     setShowAdd(false);
-    console.log({ ...variantData });
-    axiosAdmin.post("/Products", variantData)
+    console.log(productData);
+    axiosAdmin.post("/Products", productData)
       .then(() => {
-
         setIsAddSuccess(false);
         setShowAdd(false);
         setNotification('Thêm sản phẩm thành công');
-        setProduct(prevVariants => [...prevVariants, variantData]);
-        setNewVariant({
-          sizeId: null,
-          colorId: null,
-          imageId: null,
-        });
       })
       .catch((error) => {
         setNotification('Lỗi khi thêm');
       });
   };
-  const handleDelete = (prouctsId) => {
-    axiosAdmin.delete(`/Proucts/${prouctsId}`)
+  const handleDelete = (productsId) => {
+    axiosAdmin.delete(`/Products/${productsId}`)
       .then(() => {
         // Sau khi xóa thành công, cập nhật danh sách sản phẩm
-        setProduct(prevProducts => prevProducts.filter(products => products.id !== prouctsId));
+        setProduct(prevProducts => prevProducts.filter(products => products.id !== productsId));
         handleClose();
       });
   };
@@ -100,9 +85,9 @@ const Products = () => {
       id: item.id,
       price: item.price,
       clothesId: item.clothes.id,
-      sizeId: item.sizeId,
-      colorId: item.colorId,
-      imageId: item.image.productId,
+      sizeId: item.size.id,
+      colorId: item.color.id,
+      imageId: item.imageId,
       stock: item.stock,
       rateId: item.rateId,
       status: item.status
@@ -116,7 +101,7 @@ const Products = () => {
 
     // Gọi API hoặc xử lý cập nhật dữ liệu tại đây
     axiosAdmin
-      .put(`/Clothes/${itemId}`, editingItem)
+      .put(`/Products/${itemId}`, editingItem)
       .then(() => {
 
         setEditingItemId(null);
@@ -193,12 +178,19 @@ const Products = () => {
       .catch(error => {
         console.error("Error fetching colors data:", error);
       });
-      axiosAdmin.get("/Images")
+    axiosAdmin.get("/Images")
       .then(res => {
         setImage(res.data);
       })
       .catch(error => {
-        console.error("Error fetching colors data:", error);
+        console.error("Error fetching images data:", error);
+      });
+    axiosAdmin.get("/Clothes")
+      .then(res => {
+        setClothes(res.data);
+      })
+      .catch(error => {
+        console.error("Error fetching clothes data:", error);
       });
   }, [notification]);
   return (
@@ -213,8 +205,19 @@ const Products = () => {
         <Form className="row" onSubmit={handleSubmit}>
           <div className='col-md-6'>
             <Form.Group className="mb-3">
-              <Form.Label>ClothesId:</Form.Label>
-              <Form.Control type="number" name="clothesId" onChange={handleChange} />
+              <Form.Label>Clothes:</Form.Label>
+              <Form.Control
+                as="select"
+                name="clothesId"
+                onChange={handleChange}
+              >
+                <option>Chọn tên sản phẩm</option>
+                {clothes.map(clothes => (
+                  <option key={clothes.id} value={clothes.id}>
+                    {clothes.name}
+                  </option>
+                ))}
+              </Form.Control>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Price:</Form.Label>
@@ -222,13 +225,8 @@ const Products = () => {
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Sizes:</Form.Label>
-              <Form.Control
-                as="select"
-                multiple
-                name="sizeId"
-                onChange={handleChange}
-                value={newVariant.sizeId || []}
-              >
+              <Form.Control as="select" name="sizeId" onChange={handleChange}>
+                <option>Chọn size sản phẩm</option>
                 {size.map(size => (
                   <option key={size.id} value={size.id}>
                     {size.name}
@@ -238,13 +236,8 @@ const Products = () => {
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Images:</Form.Label>
-              <Form.Control
-                as="select"
-                multiple
-                name="imageId"
-                onChange={handleChange}
-                value={newVariant.imageId || []}
-              >
+              <Form.Control as="select" name="imageId" onChange={handleChange}>
+                <option>Chọn hình sản phẩm</option>
                 {images.map(images => (
                   <option key={images.id} value={images.id}>
                     {images.productId}
@@ -256,11 +249,10 @@ const Products = () => {
               <Form.Label>Colors:</Form.Label>
               <Form.Control
                 as="select"
-                multiple
                 name="colorId"
                 onChange={handleChange}
-                value={newVariant.colorId || []}
               >
+                <option>Chọn màu sản phẩm</option>
                 {color.map(color => (
                   <option key={color.id} value={color.id}>
                     {color.name}
@@ -288,7 +280,7 @@ const Products = () => {
         <thead className="table-dark">
           <tr>
             <th>STT</th>
-            <th>ClothesId</th>
+            <th>Name</th>
             <th>Price</th>
             <th>Sizes</th>
             <th>Colors</th>
@@ -305,16 +297,23 @@ const Products = () => {
                 <tr key={item.id}>
                   <td>{index + 1}</td>
                   <td>{isEditing && editingItemId === item.id ? (
-                    <input
-                      type="text"
+                    <select
+                      aria-label="Name"
+                      name="clothesId"
                       value={editingItem.clothesId}
                       onChange={(e) =>
                         setEditingItem({ ...editingItem, clothesId: e.target.value })
                       }
-                      readOnly
-                    />
+                    >
+                      <option>Chọn loại sản phẩm</option>
+                      {clothes.map((clothes) => (
+                        <option key={clothes.id} value={clothes.id}>
+                          {clothes.name}
+                        </option>
+                      ))}
+                    </select>
                   ) : (
-                    item.clothesId
+                    item.clothes.name
                   )}
                   </td>
                   <td>{isEditing && editingItemId === item.id ? (
@@ -330,17 +329,81 @@ const Products = () => {
                   )}
                   </td>
                   <td>{isEditing && editingItemId === item.id ? (
-                    <textarea
+                    <select
+                      aria-label="Size"
+                      name="sizeId"
                       value={editingItem.sizeId}
                       onChange={(e) =>
                         setEditingItem({ ...editingItem, sizeId: e.target.value })
                       }
-                    />
+                    >
+                      <option>Chọn size sản phẩm</option>
+                      {size.map((size) => (
+                        <option key={size.id} value={size.id}>
+                          {size.name}
+                        </option>
+                      ))}
+                    </select>
                   ) : (
-                    item.sizeId
+                    item.size.name
                   )}
                   </td>
-                  <td></td>
+                  <td>{isEditing && editingItemId === item.id ? (
+                    <select
+                      aria-label="Color"
+                      name="colorId"
+                      value={editingItem.colorId}
+                      onChange={(e) =>
+                        setEditingItem({ ...editingItem, colorId: e.target.value })
+                      }
+                    >
+                      <option>Chọn màu sản phẩm</option>
+                      {color.map((color) => (
+                        <option key={color.id} value={color.id}>
+                          {color.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    item.color.name
+                  )}</td>
+                  <td>
+                    {isEditing && editingItemId === item.id ? (
+                      <input
+                        type="text"
+                        value={editingItem.imageId}
+                        onChange={(e) =>
+                          setEditingItem({ ...editingItem, imageId: e.target.value })
+                        }
+                        readOnly
+                      />
+                    ) : (
+                      <img src={`https://localhost:7258/images/product/${item.imageId}.jpg`} alt='no_image' className='card-img-top' />
+                    )}
+                  </td>
+                  <td>{isEditing && editingItemId === item.id ? (
+                    <input
+                      value={editingItem.stock}
+                      onChange={(e) =>
+                        setEditingItem({ ...editingItem, stock: e.target.value })
+                      }
+                      min={0}
+                    />
+                  ) : (
+                    item.stock
+                  )}</td>
+                  <td>
+                    {isEditing && editingItemId === item.id ? (
+                      <input
+                        type="checkbox"
+                        checked={editingItem.status}
+                        onChange={(e) =>
+                          setEditingItem({ ...editingItem, status: e.target.checked })
+                        }
+                      />
+                    ) : (
+                      item.status ? "Hoạt động" : "Không hoạt động"
+                    )}</td>
                   <td>
                     {editingItemId === item.id ? (
                       <React.Fragment>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -14,13 +14,25 @@ import { ImBlog } from "react-icons/im";
 import { IoIosNotifications } from "react-icons/io";
 import { Layout, Menu, Button, theme } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { useUser } from './UserContext';
 const { Header, Sider, Content } = Layout;
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const { updateUser } = useUser();
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const navigate = useNavigate();
+  const { user } = useUser();
+  useEffect(() => {
+    // Sử dụng thông tin người dùng (ở đây lấy username)
+    const storedUsername = localStorage.getItem('fullname');
+
+    // Set thông tin người dùng vào UserContext (hoặc thực hiện các công việc khác)
+    updateUser({ fullname: storedUsername, token: localStorage.getItem('accessToken') });
+
+    // ... Các công việc khác sau khi có thông tin người dùng
+  }, []);
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -152,10 +164,7 @@ const MainLayout = () => {
               <span className='badge bg-warning rounded-circle p-1 position-absolute'>3</span>
             </div>
             <div className='d-flex gap-3 align-items-center m-3'>
-              <div>
-                <img width={50} src='https://scontent.fsgn2-3.fna.fbcdn.net/v/t39.30808-6/344336517_106984269045691_3880828535350247288_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=efb6e6&_nc_eui2=AeEWIOnJdoAc5xwivk6sWtihyMUvvqVrbuHIxS--pWtu4QTUhWCzYWa_1HQK31hKPbUp2IcnX7-zfhsorzUPralD&_nc_ohc=8LWQQIQD-sMAX9Nfh5r&_nc_ht=scontent.fsgn2-3.fna&oh=00_AfCCcAssLGbEAmTi9IL1K0iIFFtYFG8oxINGHGXDFNyUFw&oe=658E068A' alt='' />
-              </div>
-              <h5 className='name'>Ngọc Phước</h5>
+              <h5 className='name'>{user.fullname}</h5>
             </div>
           </div>
         </Header>
