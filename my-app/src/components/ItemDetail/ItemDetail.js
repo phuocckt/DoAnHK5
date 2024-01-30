@@ -7,7 +7,9 @@ import axiosClient from '../../api/axiosClient';
 
 function ItemDetail(props) {
   const {product} = props;
+  // const [product, setProduct] = useState({props});
   const {addToCart} = useContext(ShopContext);
+  // console.log("abgvdubasud",product.clothes.name);
 
   const [products, setProducts] = useState([]);
   useEffect(() => {
@@ -16,7 +18,7 @@ function ItemDetail(props) {
         setProducts(res.data)
       });
   }, []);
-  // console.log("hbauhbiasijdfis",product.clothes);
+  // console.log("hbauhbiasijdfis",props.clothes);
 
   return (
     <>
@@ -43,7 +45,7 @@ function ItemDetail(props) {
           </div>
 
           <div className='right'>
-            {/* <h1>{product.clothes.name}</h1> */}
+            {/* <h1>{product.name}</h1> */}
             <div className='star'>
                 <i class="fa-solid fa-star" />
                 <i class="fa-solid fa-star" />

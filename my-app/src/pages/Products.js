@@ -11,7 +11,7 @@ function Products() {
         setProducts(res.data)
       });
   }, []);
-  console.log(products);
+  // console.log(products);
 
   return (
     <>
