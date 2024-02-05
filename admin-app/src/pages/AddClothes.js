@@ -3,6 +3,7 @@ import axiosAdmin from '../Components/axiosAdmin';
 import { Button, Form, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faClose, faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import Swal from 'sweetalert2';
 
 const AddClothes = () => {
     const [clothes, setClothes] = useState([]);
@@ -52,14 +53,23 @@ const AddClothes = () => {
         console.log({ ...clothesData });
         axiosAdmin.post("/Clothes", clothesData)
             .then(() => {
-
                 setIsAddSuccess(false);
                 setShowAdd(false);
-                setNotification('Thêm sản phẩm thành công');
+                Swal.fire({
+                    title: "Thành công!",
+                    text: "Thêm sản phẩm thành công",
+                    icon: "success",
+                    confirmButtonText: "OK",
+                });
                 setSku(generateRandomSKU()); // Cập nhật SKU khi thêm sản phẩm thành công
             })
             .catch((error) => {
-                setNotification('Tên sản phẩm trùng nhau');
+                Swal.fire({
+                    title: "Thất bại!",
+                    text: "Thêm sản phẩm thất bại",
+                    icon: "error",
+                    confirmButtonText: "OK",
+                });
             });
     };
     const handleDelete = (clothesId) => {
@@ -99,10 +109,20 @@ const AddClothes = () => {
                     description: "",
                     productTypeId: null,
                 });
-                setNotification('Cập nhật loại sản phẩm thành công');
+                Swal.fire({
+                    title: "Thành công!",
+                    text: "Cập nhật loại sản phẩm thành công",
+                    icon: "success",
+                    confirmButtonText: "OK",
+                });
             })
             .catch((error) => {
-                setNotification('Lỗi giá trị khi sửa');
+                Swal.fire({
+                    title: "Thất bại!",
+                    text: "Lỗi giá trị khi sửa",
+                    icon: "error",
+                    confirmButtonText: "OK",
+                });
             });
     };
 
@@ -121,7 +141,12 @@ const AddClothes = () => {
         const shouldDelete = window.confirm("Bạn có chắc chắn muốn xóa không?");
         if (shouldDelete) {
             handleDelete(productTypeId);
-            setNotification('Xóa thành công');
+            Swal.fire({
+                title: "Thành công!",
+                text: "Xóa thành công",
+                icon: "success",
+                confirmButtonText: "OK",
+            });
         }
     };
 

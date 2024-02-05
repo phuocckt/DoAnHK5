@@ -41,5 +41,6 @@ namespace API_Server.Data
         public DbSet<API_Server.Models.Size> Size { get; set; }
 
         public DbSet<API_Server.Models.Voucher> Voucher { get; set; }
-    }
+		public IEnumerable<object> Products { get; internal set; }
+	}
 }

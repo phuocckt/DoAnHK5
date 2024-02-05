@@ -3,6 +3,7 @@ import axiosAdmin from '../Components/axiosAdmin';
 import { Button, Form, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faClose, faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import Swal from 'sweetalert2';
 
 const SizeList = () => {
   const [sizes, setSize] = useState([]);

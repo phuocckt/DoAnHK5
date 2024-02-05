@@ -34,9 +34,16 @@ namespace API_Server.Controllers
                                         .Include(p => p.Size)
                                         .ToListAsync();
         }
+        [HttpGet("GetProductId/{clothesId}/{sizeId}/{colorId}")]
+		public async Task<ActionResult> GetProductId(int clothesId, int sizeId, int colorId)
+        {
+			var product = await _context.Product
+												.FirstOrDefaultAsync(p => p.ClothesId == clothesId && p.ColorId==colorId&&p.SizeId==sizeId);
+            return Ok(product);
+		}
 
-        // GET: api/Products/5
-        [HttpGet("{id}")]
+		// GET: api/Products/5
+		[HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
             var product = await _context.Product.Where(p => p.Id == id).Include(p => p.Clothes)

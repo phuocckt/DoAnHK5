@@ -1,8 +1,9 @@
-import { useParams } from "react-router-dom";
+import {useParams } from "react-router-dom";
 import Comment from "../components/Comment/Comment";
 import { useEffect, useState } from "react";
 import axiosClient from "../api/axiosClient";
 import './css/Product.css'
+import Swal from 'sweetalert2';
 
 function Product() {
   const { productId } = useParams();
@@ -53,12 +54,62 @@ function Product() {
   }, [productId]);
 
   const [selectColor, setSelectColor] = useState(product.colorId);
-  // console.log("check color",selectColor);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedClothes, setSelectedClothes] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState(null);
 
   const handleClick = (item)=> ()=>{
     setImage(item.imageId);
     setSelectColor(item.colorId);
+    setSelectedColor(item.colorId);
+    setSelectedClothes(item.clothesId);
   }
+  const uniqueSizeIds = new Set();
+  useEffect(() => {
+    if(selectedColor!==null && selectedSize!== null&&selectedClothes!==null){
+      axiosClient.get(`/Products/GetProductId/${selectedClothes}/${selectedSize}/${selectedColor}`)
+      .then(res => {
+        setSelectedProductId(res.data.id);
+      }
+      )
+    }
+  },[selectedColor, selectedSize, selectedClothes]);
+  const addToCart = () => {
+    // Kiểm tra xem đã chọn size và màu chưa
+    if (selectedSize && selectedColor) {
+      // Gửi dữ liệu lên server để thêm vào giỏ hàng
+      const data = {
+        productId: selectedProductId,
+        quantity: 1
+      };
+      console.log(data);
+  
+      // Gọi API để thêm sản phẩm vào giỏ hàng
+      axiosClient.post("/Carts", data)
+        .then(response => {
+          // Xử lý khi thêm vào giỏ hàng thành công
+          Swal.fire({
+            title: "Thành công!",
+            text: "Sản phẩm đã được thêm vào giỏ hàng!",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+        })
+        .catch((error)=> {
+          // Xử lý khi có lỗi thêm vào giỏ hàng
+          Swal.fire({
+            title: "Lỗi!",
+            text: "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+        });
+    } else {
+      // Hiển thị thông báo hoặc xử lý khi size hoặc màu chưa được chọn
+      console.warn("Please select size and color before adding to cart.");
+    }
+  };
 
   return (
       
@@ -108,56 +159,38 @@ function Product() {
                   })
                 }   
               <div className='colors my-3'> 
-                <p> Color:
+                <h5>Color:
                   {
                     colors.map((item,i)=>{
                       if(item.id === selectColor){
-                        // handleClick(product);
                         return <span className="mx-2 fw-bold">{item.name}</span>;
                       }
                     })
                   }
-                </p>
+                </h5>
               </div>          
               <div className='size'>
                 <h5>Select size</h5>
                 <div className='sizes'>
+                <select value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)}>
+                <option>Chọn size</option>
                   {
-                      products.map((item,i,arr)=>{
-                        const abc = arr.findIndex(prev => prev.sizeId === item.sizeId) === i;
-                        if(item.sizeId === product.sizeId && abc){
-                          return<>
-                        {
-                                sizes.map((item1,i1)=>{
-                                  if(item.sizeId === item1.id){return <>{item1.name}</>;}
-                                })
-                              }
-                            </>;
+                      products.map((item)=>{
+                        if(item.clothesId === product.clothesId && !uniqueSizeIds.has(item.sizeId)){
+                          uniqueSizeIds.add(item.sizeId);
+                          return (
+                            <option key={item.sizeId} value={item.sizeId}>
+                              {sizes.map((item1) => (item.sizeId === item1.id && item1.name))}
+                            </option>
+                          );
                         }  
                       })
-                      // sizes.map((item,i)=>{
-                      //   if(item.id === product.sizeId){
-                      //     return <>
-                      //     {item.name+"    "}
-                      //     {
-                      //       colors.map((item,i)=>{
-                      //         if(item.id === product.colorId){return <>{item.name} <br></br></>;}
-                      //       })
-                      //     }
-                      //   </>;
-                      //   }
-                        
-                      // })
                     }
-                  {/* <div>S</div>
-                  <div>M</div>
-                  <div>L</div>
-                  <div>XL</div>
-                  <div>XXL</div> */}
+                </select>
                 </div>
                 
               </div>
-              {/* <button >ADD TO CART</button> */}
+               <button onClick={addToCart}>ADD TO CART</button>
 
           </div>
         </div>

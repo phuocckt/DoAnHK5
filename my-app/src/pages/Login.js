@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './css/LoginSignup.css'
 import { useState } from 'react';
 import axiosClient from '../api/axiosClient';
+import Swal from 'sweetalert2';
 
 function Login() {
   const [login, setLogin] = useState({
@@ -17,11 +18,21 @@ function Login() {
     axiosClient.post("/Users/login", userData)
       .then((response) => {
         localStorage.setItem('accessToken', response.data.token);
+        Swal.fire({
+          title: "Thành công!",
+          text: "Đăng nhập thành công",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
         navigate('/');
-        console.log('đăng nhập thành công');
       })
       .catch((error) => {
-        console.log('đăng nhập thất bại',error);
+        Swal.fire({
+          title: "Thất bại!",
+          text: "Đăng nhập thất bại",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
         if (error.response) {
           console.log('Server trả về lỗi:', error.response.data);
         }

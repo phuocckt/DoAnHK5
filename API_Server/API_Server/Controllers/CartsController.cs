@@ -25,7 +25,14 @@ namespace API_Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cart>>> GetCart()
         {
-            return await _context.Cart.ToListAsync();
+            return await _context.Cart.Include(p=>p.Product)
+                                        .ThenInclude(c=>c.Clothes)
+                                        .Include(p => p.Product)
+                                        .ThenInclude(c => c.Color)
+										.Include(p => p.Product)
+										.ThenInclude(c => c.Size)
+									   .Include(p=>p.User)
+									   .ToListAsync();
         }
 
         // GET: api/Carts/5
@@ -78,11 +85,26 @@ namespace API_Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Cart>> PostCart(Cart cart)
         {
-            _context.Cart.Add(cart);
-            await _context.SaveChangesAsync();
+			// Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng hay chưa
+			var existingCartItem = _context.Cart
+				.Where(c => c.ProductId == cart.ProductId)
+				.FirstOrDefault();
 
-            return CreatedAtAction("GetCart", new { id = cart.Id }, cart);
-        }
+			if (existingCartItem != null)
+			{
+				// Cập nhật số lượng sản phẩm đã tồn tại
+				existingCartItem.Quantity++;
+				await _context.SaveChangesAsync();
+				return CreatedAtAction("GetCart", new { id = existingCartItem.Id }, existingCartItem);
+			}
+			else
+			{
+				// Thêm sản phẩm mới vào giỏ hàng
+				_context.Cart.Add(cart);
+				await _context.SaveChangesAsync();
+				return CreatedAtAction("GetCart", new { id = cart.Id }, cart);
+			}
+		}
 
         // DELETE: api/Carts/5
         [HttpDelete("{id}")]

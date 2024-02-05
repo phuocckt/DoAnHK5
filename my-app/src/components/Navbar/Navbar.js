@@ -1,11 +1,18 @@
 import './Navbar.css'
-import { useContext, useState } from 'react';
+import {useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShopContext } from '../../Context/ShopContext';
+import axiosClient from '../../api/axiosClient';
 
 function Navbar() {
     const [active, setActive] = useState("home");
-    const {getTotalCartItem} = useContext(ShopContext);
+    const [carts, setCart]=useState([]);
+    useEffect(()=>{
+        axiosClient.get("/Carts")
+        .then(res=>setCart(res.data));
+    },[]);
+    const getTotalCartItem=()=>{
+        return carts.length;
+    }
 
   return (
     <>

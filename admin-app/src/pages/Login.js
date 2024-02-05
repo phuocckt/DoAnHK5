@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import axiosAdmin from '../Components/axiosAdmin';
-import CustomerInput from '../Components/CustomerInput';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useUser } from '../Components/UserContext';
+import Swal from 'sweetalert2';
 
 const Login = () => {
   const [login, setLogin] = useState({
@@ -27,11 +27,21 @@ const Login = () => {
         const fullName = getFullName(response.data.token);
         localStorage.setItem('fullname', fullName);
         updateUser({ fullname: fullName, token: response.data.token });
+        Swal.fire({
+          title: "Thành công!",
+          text: "Đăng nhập thành công",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
         navigate('/admin');
-        console.log('đăng nhập thành công');
       })
       .catch((error) => {
-        console.log('đăng nhập thất bại',error);
+        Swal.fire({
+          title: "Thất bại!",
+          text: "Đăng nhập thất bại",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
         if (error.response) {
           console.log('Server trả về lỗi:', error.response.data);
         }
