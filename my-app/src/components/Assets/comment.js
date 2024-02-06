@@ -2,7 +2,7 @@ let comment = [
     {
         id: 1,
         user_name: 'Le Van Nguyen',
-        content: 'Very good !',
+        content: 'Use justify-content utilities on flexbox containers to change the alignment of flex items on the main axis (the x-axis to start, y-axis if flex-direction: column). Choose from start (browser default), end, center, between, around, or evenly.',
         date: '11/1/2023',
         clothes_id: 1,
         parent_id: null,
@@ -10,7 +10,7 @@ let comment = [
     {
         id: 2,
         user_name: 'Le Van Dat',
-        content: 'Nice',
+        content: 'NiceUse justify-content utilities on flexbox containers to change the alignment of flex items on the main axis (the x-axis to start, y-axis if flex-direction: column). Choose from start (browser default), end, center, between, around, or evenly.',
         date: '11/1/2023',
         clothes_id: 1,
         parent_id: 1,
@@ -18,7 +18,7 @@ let comment = [
     {
         id: 3,
         user_name: 'Le Van Dat',
-        content: 'Đẹp',
+        content: 'Use justify-content utilities on flexbox containers to change the alignment of flex items on the main axis (the x-axis to start, y-axis if flex-direction: column). Choose from start (browser default), end, center, between, around, or evenly.',
         date: '11/1/2023',
         clothes_id: 1,
         parent_id: 1,
@@ -34,7 +34,7 @@ let comment = [
     {
         id: 5,
         user_name: 'Le Van Dat',
-        content: 'Amazing !',
+        content: 'Use justify-content utilities on flexbox containers to change the alignment of flex items on the main axis (the x-axis to start, y-axis if flex-direction: column). Choose from start (browser default), end, center, between, around, or evenly.',
         date: '11/1/2023',
         clothes_id: 1,
         parent_id: 4,
