@@ -32,8 +32,8 @@ export default function Footer() {
           <MDBRow className='mt-3'>
             <MDBCol md='3' lg='4' xl='3' className='mx-auto mb-4'>
               <h6 className='text-uppercase fw-bold mb-4'>
-                <MDBIcon color='secondary' icon='gem' className='me-3' />
-                Company name
+                <MDBIcon color='secondary' icon='cart-shopping' className='me-3' />
+                Clothes Shop
               </h6>
               <p>
                 Here you can use rows and columns to organize your footer content. Lorem ipsum dolor sit
@@ -93,11 +93,11 @@ export default function Footer() {
               <h6 className='text-uppercase fw-bold mb-4'>Contact</h6>
               <p>
                 <MDBIcon color='secondary' icon='home' className='me-2' />
-                New York, NY 10012, US
+                Cao Thang, HCM City, VN
               </p>
               <p>
                 <MDBIcon color='secondary' icon='envelope' className='me-3' />
-                info@example.com
+                clothesshop@gmail.com
               </p>
               <p>
                 <MDBIcon color='secondary' icon='phone' className='me-3' /> + 01 234 567 88
@@ -111,9 +111,9 @@ export default function Footer() {
       </section>
 
       <div className='text-center p-4' style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
-        © 2021 Copyright:
+        © 2024 Copyright:  
         <a className='text-reset fw-bold' href='https://mdbootstrap.com/'>
-          MDBootstrap.com
+          ClothesShop.com
         </a>
       </div>
     </MDBFooter>
