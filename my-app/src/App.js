@@ -9,15 +9,9 @@ import Cart from './pages/Cart';
 import Category from './pages/Category';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import axiosClient from './api/axiosClient';
-import { useEffect, useState } from 'react';
+import Invoice from './pages/Invoice';
 
 function App() {
-  const [productTypes, setProductType] = useState([]);
-  useEffect(()=>{
-    axiosClient.get("/ProductTypes")
-    .then(res => setProductType(res.data));
-},[]);
   return (
     <BrowserRouter>
         <Routes>
@@ -41,15 +35,10 @@ function App() {
                   <Route path=":productId" element={<Product />} />
                 </Route> 
                 
-                <Route path="/categories" element={<Category/>}>
-                  {
-                    productTypes.map((item)=>{
-                      <Route path={`/${item.id}`} element={<Category category={item.id}/>} />
-                    })
-                  }
-                </Route>
+                <Route path="/categories" element={<Category />} />
                 <Route path="/favorites" element={<Favorites />} />
                 <Route path="/cart" element={<Cart />} />
+                {/* <Route path="/invoice" element={<Invoice />} /> */}
 
             </Route>
         </Routes>

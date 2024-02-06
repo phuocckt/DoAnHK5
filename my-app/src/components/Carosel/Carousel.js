@@ -7,10 +7,10 @@ function Carousel() {
             url: './image/banner/banner_1.png'
         },
         {
-            url: './image/banner/banner_99.png'
+            url: './image/banner/banner_2.jpg'
         },
         {
-            url: './image/banner/banner_1.png'
+            url: './image/banner/banner_3.jpg'
         },
     ]
 

@@ -26,6 +26,7 @@ function Navbar() {
                 <Link className='text-decoration-none' to='/products'><li onClick={()=>setActive("product")} className={active==="product"?"active h":"h"}>PRODUCT</li></Link>
                 <Link className='text-decoration-none' to='/favorites'><li onClick={()=>setActive("favorite")} className={active==="favorite"?"active":""}>FAVORITE</li></Link>
                 <Link className='text-decoration-none' to='/categories'><li onClick={()=>setActive("category")} className={active==="category"?"active":""}>CATEGORY</li></Link>
+                <Link className='text-decoration-none' to='/invoice'><li onClick={()=>setActive("invoice")} className={active==="invoice"?"active":""}>INVOICE</li></Link>
             </ul>
             <div className='nav-end'>
                 <Link to='login'><button>Login</button></Link>

@@ -14,6 +14,8 @@
     margin: 10px 10px;
     border-right: 1px solid rgba(255, 255, 255, 0.3);
     padding-right: 20px;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
 }
 .product-type li:last-child{
     border: none;
@@ -21,4 +23,8 @@
 .product-type li a{
     color: white;
     text-decoration: none;
+}
+.product-type .active-protype{
+    text-decoration: underline;
+    color: white;
 }
