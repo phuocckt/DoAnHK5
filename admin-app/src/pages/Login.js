@@ -16,6 +16,10 @@ const Login = () => {
     const decodedToken = jwtDecode(token);
     return decodedToken.fullname;
   }
+  function getId(token) {
+    const decodedToken = jwtDecode(token);
+    return decodedToken.id;
+  }
 
   const handleSubmit = (e)=>{
     e.preventDefault();
@@ -25,8 +29,10 @@ const Login = () => {
       .then((response) => {
         localStorage.setItem('accessToken', response.data.token);
         const fullName = getFullName(response.data.token);
+        const id = getId(response.data.token);
         localStorage.setItem('fullname', fullName);
-        updateUser({ fullname: fullName, token: response.data.token });
+        localStorage.setItem('id', id);
+        updateUser({id: id, fullname: fullName, token: response.data.token });
         Swal.fire({
           title: "Thành công!",
           text: "Đăng nhập thành công",
@@ -46,6 +52,7 @@ const Login = () => {
           console.log('Server trả về lỗi:', error.response.data);
         }
         console.log(JSON.stringify(userData));
+        navigate('/login-admin');
       });
   }
   const handleChange = (e) => {

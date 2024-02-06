@@ -3,11 +3,15 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import ShopContextProvider from './Context/ShopContext';
+import { UserProvider } from './components/UserContext';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <ShopContextProvider>
-      <App />
+      <UserProvider>
+        <App />
+      </UserProvider>
     </ShopContextProvider>
     
 );

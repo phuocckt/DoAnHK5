@@ -1,9 +1,11 @@
-import {useParams } from "react-router-dom";
+import {useNavigate, useParams } from "react-router-dom";
 import Comment from "../components/Comment/Comment";
 import { useEffect, useState } from "react";
 import axiosClient from "../api/axiosClient";
 import './css/Product.css'
 import Swal from 'sweetalert2';
+import { useUser } from '../components/UserContext';
+import { theme } from "antd";
 
 function Product() {
   const { productId } = useParams();
@@ -12,6 +14,12 @@ function Product() {
   const [sizes, setSizes] = useState([]);
   const [colors, setColors] = useState([]);
   const [image, setImage] = useState(null);
+  const { updateUser } = useUser();
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
+  const { user } = useUser();
+  const navigate = useNavigate();
 
   
   // handleClick(product);
@@ -37,7 +45,8 @@ function Product() {
   useEffect(() => {
     // Định nghĩa một hàm bất đồng bộ để gọi API
     // const id = Number(productId);
-
+    const storedId = localStorage.getItem('id');
+    updateUser({ id: storedId, token: localStorage.getItem('accessToken') });
     const fetchData = async () => {
       try {
         // Gọi API và chờ nhận kết quả
@@ -77,10 +86,11 @@ function Product() {
   },[selectedColor, selectedSize, selectedClothes]);
   const addToCart = () => {
     // Kiểm tra xem đã chọn size và màu chưa
-    if (selectedSize && selectedColor) {
+    if (selectedSize && selectedColor && user.id) {
       // Gửi dữ liệu lên server để thêm vào giỏ hàng
       const data = {
         productId: selectedProductId,
+        userId: user.id,
         quantity: 1
       };
       console.log(data);
@@ -105,9 +115,24 @@ function Product() {
             confirmButtonText: "OK",
           });
         });
-    } else {
+    }else if(!selectedSize){
+      Swal.fire({
+        title: "Lỗi!",
+        text: "Vui lòng nhập đầy đủ thông tin",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }else if(!selectColor){
+      Swal.fire({
+        title: "Lỗi!",
+        text: "Vui lòng nhập đầy đủ thông tin",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+     else {
       // Hiển thị thông báo hoặc xử lý khi size hoặc màu chưa được chọn
-      console.warn("Please select size and color before adding to cart.");
+      window.location.href="/login";
     }
   };
 

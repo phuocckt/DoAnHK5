@@ -21,7 +21,7 @@ function Popular() {
                         if(i > 0 && (item.clothesId === products[i - 1].clothesId)){
                             i++;
                         }else{
-                            return <Item id={item.id} name={item.name} image={item.imageId} price={item.price}/>;
+                            return <Item productId={item.id} name={item.name} image={item.imageId} price={item.price}/>;
                         }  
                     })
                 }

@@ -25,7 +25,8 @@ namespace API_Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Favorite>>> GetFavorite()
         {
-            return await _context.Favorite.ToListAsync();
+            return await _context.Favorite.Include(p => p.Product).Include(p => p.User)
+										   .ToListAsync();
         }
 
         // GET: api/Favorites/5
@@ -78,10 +79,13 @@ namespace API_Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Favorite>> PostFavorite(Favorite favorite)
         {
-            _context.Favorite.Add(favorite);
+			if (_context.Favorite.Any(p => p.ProductId == favorite.ProductId && p.UserId==favorite.UserId))
+			{
+				return BadRequest(ModelState);
+			}
+			_context.Favorite.Add(favorite);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetFavorite", new { id = favorite.Id }, favorite);
+			return CreatedAtAction("GetFavorite", new { id = favorite.Id }, favorite);
         }
 
         // DELETE: api/Favorites/5

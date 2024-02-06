@@ -3,6 +3,8 @@ import './css/LoginSignup.css'
 import { useState } from 'react';
 import axiosClient from '../api/axiosClient';
 import Swal from 'sweetalert2';
+import { useUser } from '../components/UserContext';
+import { jwtDecode } from 'jwt-decode';
 
 function Login() {
   const [login, setLogin] = useState({
@@ -10,6 +12,15 @@ function Login() {
     Password: '',
   });
   const navigate = useNavigate();
+  const { updateUser } = useUser();
+  function getFullName(token) {
+    const decodedToken = jwtDecode(token);
+    return decodedToken.fullname;
+  }
+  function getId(token) {
+    const decodedToken = jwtDecode(token);
+    return decodedToken.id;
+  }
 
   const handleSubmit = (e)=>{
     e.preventDefault();
@@ -18,6 +29,11 @@ function Login() {
     axiosClient.post("/Users/login", userData)
       .then((response) => {
         localStorage.setItem('accessToken', response.data.token);
+        const fullName = getFullName(response.data.token);
+        const id = getId(response.data.token);
+        localStorage.setItem('fullname', fullName);
+        localStorage.setItem('id', id);
+        updateUser({id: id, fullname: fullName, token: response.data.token });
         Swal.fire({
           title: "Thành công!",
           text: "Đăng nhập thành công",
