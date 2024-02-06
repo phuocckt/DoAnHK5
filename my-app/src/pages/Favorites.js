@@ -37,7 +37,7 @@ function Favorites() {
           favorites.map((e) => {
             if (user.id === e.userId) {
               return (
-                <Item id={e.id} productId={e.productId} name={e.product.name} image={e.product.imageId} price={e.product.price} idFa={e.id} />
+                <Item id={e.id} productId={e.productId} name={e.product.name} image={e.product.imageId} price={e.product.price} idFa={e.productId} />
               );
             }
             return null; // Trả về null nếu không có id

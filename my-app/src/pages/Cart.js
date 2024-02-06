@@ -9,7 +9,9 @@ import { theme } from 'antd';
 function Cart() {
     const [carts, setCart] = useState([]);
     const [show, setShow] = useState(false);
-    const [total, setTotal] = useState(0);
+    const [totals, setTotal] = useState(0);
+    const [invoices, setInvoice] = useState({});
+    const [invoiceDetail, setInvoiceDetail] = useState({});
     const { updateUser } = useUser();
     const {
         token: { colorBgContainer },
@@ -48,8 +50,7 @@ function Cart() {
     const handleDelete = (cartId) => {
         axiosClient.delete(`/Carts/${cartId}`)
             .then(() => {
-                // Sau khi xóa thành công, cập nhật danh sách sản phẩm
-                setCart(prevcartId => prevcartId.filter(carts => carts.id !== cartId));
+                window.location.reload();
             });
     };
     const handleDeleteConfirmation = (cartId) => {
@@ -103,6 +104,36 @@ function Cart() {
                 });
         }
     }
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+    
+        setInvoice((prevInvoice) => ({
+            ...(prevInvoice || {}),
+            [name]: type === 'select-one' ? e.target.selectedOptions[0].value : (type === 'checkbox' ? checked : value),
+        }));
+    };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const invoiceData = {...invoices, userId:user.id, status:true, total:totals};
+        axiosClient.post("/Invoices", invoiceData)
+          .then(() => {
+            Swal.fire({
+                title: "Thành công!",
+                text: "Đặt hàng thành công",
+                icon: "success",
+                confirmButtonText: "OK",
+            });
+            handleClose();
+          })
+          .catch((error) => {
+            Swal.fire({
+                title: "Lỗi!",
+                text: "Vui lòng nhập đầy đủ thông tin",
+                icon: "error",
+                confirmButtonText: "OK",
+            });
+          });
+      };
 
     return (
         <>
@@ -144,7 +175,7 @@ function Cart() {
                                 }
                             })
                         }
-                        <h1>Tổng tiền: {total}</h1>
+                        <h1>Tổng tiền: {totals}</h1>
                     </tbody>
                     <Button variant="danger" onClick={handleShow} className='px-5'>
                         Đặt hàng
@@ -161,6 +192,8 @@ function Cart() {
                                 <Form.Control
                                     type="date"
                                     name="invoiceDate"
+                                    onChange={handleChange}
+                                    required
                                 />
                             </Form.Group>
                             <Form.Label>Tổng tiền</Form.Label>
@@ -168,7 +201,8 @@ function Cart() {
                                 <Form.Control
                                     type="text"
                                     name="total"
-                                    value={total}
+                                    value={totals}
+                                    onChange={handleChange}
                                     readOnly
                                 />
                             </Form.Group>
@@ -178,6 +212,8 @@ function Cart() {
                                     type="text"
                                     name="addressShip"
                                     placeholder='57 D5 xxxxxxxxx'
+                                    onChange={handleChange}
+                                    required
                                 />
                             </Form.Group>
                             <Form.Label>Số điện thoại</Form.Label>
@@ -186,15 +222,29 @@ function Cart() {
                                     type="text"
                                     name="phone"
                                     placeholder='0xxxxxxxxx'
+                                    onChange={handleChange}
+                                    required
                                 />
                             </Form.Group>
+                            <Form.Control
+                                type="hidden"
+                                name="userId"
+                                value={user.id}
+                                onChange={handleChange}
+                            />
+                            <Form.Control
+                                type="hidden"
+                                name="status"
+                                value={1}
+                                onChange={handleChange}
+                            />
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="danger" onClick={handleClose}>
                             Hủy
                         </Button>
-                        <Button variant="success" onClick={handleClose}>
+                        <Button variant="success" onClick={handleSubmit}>
                             Thanh toán
                         </Button>
                     </Modal.Footer>

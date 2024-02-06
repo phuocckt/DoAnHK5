@@ -46,7 +46,8 @@ function Product() {
     // Định nghĩa một hàm bất đồng bộ để gọi API
     // const id = Number(productId);
     const storedId = localStorage.getItem('id');
-    updateUser({ id: storedId, token: localStorage.getItem('accessToken') });
+    const storedUsername = localStorage.getItem('fullname');
+    updateUser({fullname: storedUsername, id: storedId, token: localStorage.getItem('accessToken') });
     const fetchData = async () => {
       try {
         // Gọi API và chờ nhận kết quả

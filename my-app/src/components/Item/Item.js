@@ -39,7 +39,7 @@ function Item(props) {
 
   useEffect(() => {
     // Kiểm tra xem sản phẩm đã được yêu thích chưa khi component mount
-    setIsFavorited(props.id === props.idFa);
+    setIsFavorited(props.productId === props.idFa);
   }, [props.id, props.idFa]);
 
   return (
