@@ -38,7 +38,7 @@ function App() {
                 <Route path="/categories" element={<Category />} />
                 <Route path="/favorites" element={<Favorites />} />
                 <Route path="/cart" element={<Cart />} />
-                {/* <Route path="/invoice" element={<Invoice />} /> */}
+                <Route path="/invoice" element={<Invoice />} />
 
             </Route>
         </Routes>
