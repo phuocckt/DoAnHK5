@@ -52,7 +52,7 @@ const Login = () => {
           console.log('Server trả về lỗi:', error.response.data);
         }
         console.log(JSON.stringify(userData));
-        navigate('/login-admin');
+        navigate('/');
       });
   }
   const handleChange = (e) => {

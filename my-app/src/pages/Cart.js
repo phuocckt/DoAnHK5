@@ -116,16 +116,16 @@ function Cart() {
     };
     const handleSubmit = async () => {
         try {
-            const invoiceData = { userId: user.id, status: false, total: totals };
+            const invoiceData = {...invoices, userId: user.id, status: false, total: totals };
             const response = await axiosClient.post("/Invoices", invoiceData);
     
             const invoiceDetailData = carts
                 .filter((item) => item.userId === user.id)
                 .map((item) => ({
-                    invoiceId: response.data.id,
                     productId: item.productId,
                     quantity: item.quantity,
-                    unitPrice: item.product.price
+                    unitPrice: item.product.price,
+                    invoiceId: response.data.id
                 }));
     
             await axiosClient.post("/InvoiceDetails", invoiceDetailData);
