@@ -58,7 +58,7 @@ function Item(props) {
             <i className="fa-solid fa-star" />
           </div>
           <div className='price'>
-            <div className='new-price'>${props.price}</div>
+            <div className='new-price'>{props.price} VNĐ</div>
           </div>
           <div className='utilities'>
             <i

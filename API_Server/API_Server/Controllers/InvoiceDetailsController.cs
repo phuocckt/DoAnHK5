@@ -25,7 +25,10 @@ namespace API_Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InvoiceDetail>>> GetInvoiceDetail()
         {
-            return await _context.InvoiceDetail.ToListAsync();
+            return await _context.InvoiceDetail.Include(p => p.Invoice)
+                                                .Include(p => p.Product)
+                                                .ThenInclude(c => c.Clothes)
+                                                .ToListAsync();
         }
 
         // GET: api/InvoiceDetails/5
@@ -73,19 +76,19 @@ namespace API_Server.Controllers
             return NoContent();
         }
 
-        // POST: api/InvoiceDetails
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<InvoiceDetail>> PostInvoiceDetail(InvoiceDetail invoiceDetail)
-        {
-            _context.InvoiceDetail.Add(invoiceDetail);
-            await _context.SaveChangesAsync();
+		// POST: api/InvoiceDetails
+		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[HttpPost]
+		public async Task<ActionResult<InvoiceDetail>> PostInvoiceDetail(InvoiceDetail invoiceDetail)
+		{
+			_context.InvoiceDetail.Add(invoiceDetail);
+			await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetInvoiceDetail", new { id = invoiceDetail.Id }, invoiceDetail);
-        }
+			return CreatedAtAction("GetInvoiceDetail", new { id = invoiceDetail.Id }, invoiceDetail);
+		}
 
-        // DELETE: api/InvoiceDetails/5
-        [HttpDelete("{id}")]
+		// DELETE: api/InvoiceDetails/5
+		[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInvoiceDetail(int id)
         {
             var invoiceDetail = await _context.InvoiceDetail.FindAsync(id);

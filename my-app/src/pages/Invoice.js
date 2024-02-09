@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   MDBCard,
   MDBCardBody,
@@ -12,161 +12,180 @@ import {
   MDBTableHead,
   MDBTableBody,
 } from "mdb-react-ui-kit";
+import axiosClient from "../api/axiosClient";
+import { useUser } from "../components/UserContext";
+import { theme } from "antd";
 
 export default function Invoice() {
+  const [invoices, setInvoice] = useState([]);
+  const [invoiceDetails, setInvoiceDetail] = useState([]);
+  const [totals, setTotal] = useState(0);
+  let index = 0;
+  const { updateUser } = useUser();
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
+  const { user } = useUser();
+  useEffect(() => {
+    const storedId = localStorage.getItem('id');
+    const storedUsername = localStorage.getItem('fullname');
+    updateUser({ fullname: storedUsername, id: storedId, token: localStorage.getItem('accessToken') });
+    axiosClient.get("/Invoices")
+      .then(res => setInvoice(res.data));
+    axiosClient.get("/InvoiceDetails")
+      .then(res => {
+        setInvoiceDetail(res.data);
+        const cartTotal = res.data.reduce((acc, item) => {
+          return acc + item.unitPrice * item.quantity;
+        }, 0);
+        setTotal(cartTotal);
+      });
+  }, [user.id]);
   return (
-    <MDBContainer className="py-5">
-      <MDBCard className="p-4 w-100 h-100">
-        <MDBCardBody>
-          <MDBContainer className="mb-2 mt-3">
-            <MDBRow className="d-flex align-items-baseline">
-              <MDBCol xl="9">
-                <p style={{ color: "#7e8d9f", fontSize: "20px" }}>
-                  Invoice &gt; &gt; <strong>ID: #123-123</strong>
-                </p>
-              </MDBCol>
-              <MDBCol xl="3" className="float-end">
-                <MDBBtn
-                  color="light"
-                  ripple="dark"
-                  className="text-capitalize border-0"
-                >
-                  <MDBIcon fas icon="print" color="primary" className="me-1" />
-                  Print
-                </MDBBtn>
-                <MDBBtn
-                  color="light"
-                  ripple="dark"
-                  className="text-capitalize border-0 ms-2"
-                >
-                  <MDBIcon
-                    far
-                    icon="file-pdf"
-                    color="danger"
-                    className="me-1"
-                  />
-                  Export
-                </MDBBtn>
-                <hr />
-              </MDBCol>
-            </MDBRow>
-          </MDBContainer>
-          <MDBContainer>
-            <MDBCol md="12" className="text-center">
-            <img className="mb-3" style={{width:'100px'}} src="./image/logo/logo_shop.png"/>
-            </MDBCol>
-          </MDBContainer>
-          <MDBRow>
-            <MDBCol xl="8">
-              <MDBTypography listUnStyled>
-                <li className="text-muted">
-                  To: <span style={{ color: "#5d9fc5" }}>John Lorem</span>
-                </li>
-                <li className="text-muted">Street, City</li>
-                <li className="text-muted">State, Country</li>
-                <li className="text-muted">
-                  <MDBIcon fas icon="phone-alt" /> 123-456-789
-                </li>
-              </MDBTypography>
-            </MDBCol>
-            <MDBCol xl="4">
-              <p className="text-muted">Invoice</p>
-              <MDBTypography listUnStyled>
-                <li className="text-muted">
-                  <MDBIcon fas icon="circle" style={{ color: "#84B0CA" }} />
-                  <span className="fw-bold ms-1">ID:</span>#123-456
-                </li>
-                <li className="text-muted">
-                  <MDBIcon fas icon="circle" style={{ color: "#84B0CA" }} />
-                  <span className="fw-bold ms-1">Creation Date: </span>Jun
-                  23,2021
-                </li>
-                <li className="text-muted">
-                  <MDBIcon fas icon="circle" style={{ color: "#84B0CA" }} />
-                  <span className="fw-bold ms-1">Status:</span>
-                  <span className="badge bg-warning text-black fw-bold ms-1">
-                    Unpaid
-                  </span>
-                </li>
-              </MDBTypography>
-            </MDBCol>
-          </MDBRow>
-          <MDBRow className="my-2 mx-1 justify-content-center">
-            <MDBTable striped borderless>
-              <MDBTableHead
-                className="text-white"
-                style={{ backgroundColor: "#84B0CA" }}
-              >
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Description</th>
-                  <th scope="col">Qty</th>
-                  <th scope="col">Unit Price</th>
-                  <th scope="col">Amount</th>
-                </tr>
-              </MDBTableHead>
-              <MDBTableBody>
-                <tr>
-                  <th scope="row">1</th>
-                  <td>Pro Package</td>
-                  <td>4</td>
-                  <td>$200</td>
-                  <td>$800</td>
-                </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <td>Web hosting</td>
-                  <td>1</td>
-                  <td>$10</td>
-                  <td>$10</td>
-                </tr>
-                <tr>
-                  <th scope="row">3</th>
-                  <td>Consulting</td>
-                  <td>1 year</td>
-                  <td>$300</td>
-                  <td>$300</td>
-                </tr>
-              </MDBTableBody>
-            </MDBTable>
-          </MDBRow>
-          <MDBRow>
-            <MDBCol xl="8">
-              <p className="ms-3">
-                Add additional notes and payment information
-              </p>
-            </MDBCol>
-            <MDBCol xl="3">
-              <MDBTypography listUnStyled>
-                <li className="text-muted ms-3">
-                  <span class="text-black me-4">SubTotal</span>$1110
-                </li>
-                <li className="text-muted ms-3 mt-2">
-                  <span class="text-black me-4">Tax(15%)</span>$111
-                </li>
-              </MDBTypography>
-              <p className="text-black float-start">
-                <span className="text-black me-3"> Total Amount</span>
-                <span style={{ fontSize: "25px" }}>$1221</span>
-              </p>
-            </MDBCol>
-          </MDBRow>
-          <hr />
-          <MDBRow>
-            <MDBCol xl="10">
-              <p>Thank you for your purchase</p>
-            </MDBCol>
-            <MDBCol xl="2">
-              <MDBBtn
-                className="text-capitalize"
-                style={{ backgroundColor: "#60bdf3" }}
-              >
-                Pay Now
-              </MDBBtn>
-            </MDBCol>
-          </MDBRow>
-        </MDBCardBody>
-      </MDBCard>
-    </MDBContainer>
+    <>
+      {invoices.map(item => {
+        if (user.id === item.userId) {
+          return (
+            <MDBContainer className="py-5">
+              <MDBCard className="p-4 w-100 h-100">
+                <MDBCardBody>
+                  <MDBContainer className="mb-2 mt-3">
+                    <MDBRow className="d-flex align-items-baseline">
+                      <MDBCol xl="9">
+                        <p style={{ color: "#7e8d9f", fontSize: "20px" }}>
+                          Hóa đơn &gt; &gt; <strong>Mã: {item.id}</strong>
+                        </p>
+                      </MDBCol>
+                      <MDBCol xl="3" className="float-end">
+                        <MDBBtn
+                          color="light"
+                          ripple="dark"
+                          className="text-capitalize border-0"
+                        >
+                          <MDBIcon fas icon="print" color="primary" className="me-1" />
+                          In
+                        </MDBBtn>
+                        <MDBBtn
+                          color="light"
+                          ripple="dark"
+                          className="text-capitalize border-0 ms-2"
+                        >
+                          <MDBIcon
+                            far
+                            icon="file-pdf"
+                            color="danger"
+                            className="me-1"
+                          />
+                          Xuất
+                        </MDBBtn>
+                        <hr />
+                      </MDBCol>
+                    </MDBRow>
+                  </MDBContainer>
+                  <MDBContainer>
+                    <MDBCol md="12" className="text-center">
+                      <img className="mb-3" style={{ width: '100px' }} src="./image/logo/logo_shop.png" />
+                    </MDBCol>
+                  </MDBContainer>
+                  <MDBRow>
+                    <MDBCol xl="8">
+                      <MDBTypography listUnStyled>
+                        <li className="text-muted">
+                          Đến: <span style={{ color: "#5d9fc5" }}>{user.fullname}</span>
+                        </li>
+                        <li className="text-muted">{item.addressShip}</li>
+                        <li className="text-muted">
+                          <MDBIcon fas icon="phone-alt" /> {item.phone}
+                        </li>
+                      </MDBTypography>
+                    </MDBCol>
+                    <MDBCol xl="4">
+                      <p className="text-muted">HÓA ĐƠN</p>
+                      <MDBTypography listUnStyled>
+                        <li className="text-muted">
+                          <MDBIcon fas icon="circle" style={{ color: "#84B0CA" }} />
+                          <span className="fw-bold ms-1">Mã:</span>#{item.id}
+                        </li>
+                        <li className="text-muted">
+                          <MDBIcon fas icon="circle" style={{ color: "#84B0CA" }} />
+                          <span className="fw-bold ms-1">Ngày tạo hóa đơn: </span>{item.invoiceDate}
+                        </li>
+                        <li className="text-muted">
+                          <MDBIcon fas icon="circle" style={{ color: "#84B0CA" }} />
+                          <span className="fw-bold ms-1">Trạng thái:</span>
+                          <span className="badge bg-warning text-black fw-bold ms-1">
+                            {item.status ? "Đã thanh toán" : "Chưa thanh toán"}
+                          </span>
+                        </li>
+                      </MDBTypography>
+                    </MDBCol>
+                  </MDBRow>
+                  <MDBRow className="my-2 mx-1 justify-content-center">
+                    <MDBTable striped borderless>
+                      <MDBTableHead
+                        className="text-white"
+                        style={{ backgroundColor: "#84B0CA" }}
+                      >
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Tên sản phẩm</th>
+                          <th scope="col">Số lượng</th>
+                          <th scope="col">Giá</th>
+                          <th scope="col">Tổng giá</th>
+                        </tr>
+                      </MDBTableHead>
+                      <MDBTableBody>
+                        {invoiceDetails.map((item2) => {
+                          if (item.id === item2.invoiceId) {
+                            index++;
+                            return (
+                              <tr>
+                                <th scope="row">{index}</th>
+                                <td>{item2.product.clothes.name}</td>
+                                <td>{item2.quantity}</td>
+                                <td>{item2.unitPrice} VNĐ</td>
+                                <td>{item2.quantity * item2.unitPrice} VNĐ</td>
+                              </tr>
+                            )
+                          }
+                        })}
+                      </MDBTableBody>
+                    </MDBTable>
+                  </MDBRow>
+
+                  <MDBRow>
+                    <MDBCol xl="8">
+                      <p className="ms-3">
+                        Xem lại thông tin trước khi thanh toán
+                      </p>
+                    </MDBCol>
+                    <MDBCol xl="3">
+                      <p className="text-black float-start">
+                        <span className="text-black me-3"> Tổng tiền:</span>
+                        <span style={{ fontSize: "25px" }}>{totals} VNĐ</span>
+                      </p>
+                    </MDBCol>
+                  </MDBRow>
+                  <hr />
+                  <MDBRow>
+                    <MDBCol xl="10">
+                      <p>Cảm ơn bạn đã mua hàng của bạn</p>
+                    </MDBCol>
+                    <MDBCol xl="2">
+                      <MDBBtn
+                        className="text-capitalize"
+                        style={{ backgroundColor: "#60bdf3" }}
+                      >
+                        Thanh toán ngay
+                      </MDBBtn>
+                    </MDBCol>
+                  </MDBRow>
+                </MDBCardBody>
+              </MDBCard>
+            </MDBContainer>
+          )
+        }
+      })}
+    </>
   );
 }

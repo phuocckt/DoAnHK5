@@ -6,7 +6,7 @@ namespace API_Server.Models
 	{
 		public int Id { get; set; }
 		public string Content { get; set; }
-		public DateTime Date { get; set; }
+		public DateTime? Date { get; set; }
 		public string UserId { get; set; }
 		public int ClothesId { get; set; }
 		public int? ParentCommentId { get; set; }

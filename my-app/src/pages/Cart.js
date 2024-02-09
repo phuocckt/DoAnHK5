@@ -5,13 +5,15 @@ import axiosClient from '../api/axiosClient';
 import Swal from 'sweetalert2';
 import { useUser } from '../components/UserContext';
 import { theme } from 'antd';
+import { BsCartX } from "react-icons/bs";
 
 function Cart() {
     const [carts, setCart] = useState([]);
     const [show, setShow] = useState(false);
     const [totals, setTotal] = useState(0);
     const [invoices, setInvoice] = useState({});
-    const [invoiceDetail, setInvoiceDetail] = useState({});
+    const [invoiceDetail, setInvoiceDetail] = useState([]);
+    let count = 0;
     const { updateUser } = useUser();
     const {
         token: { colorBgContainer },
@@ -30,7 +32,7 @@ function Cart() {
             try {
                 // Gọi API và chờ nhận kết quả
                 const response = await axiosClient.get(`/Carts`);
-        
+
                 // Xử lý dữ liệu nhận được từ API và cập nhật state
                 const cartTotal = response.data.reduce((acc, item) => {
                     if (user.id === item.userId) {
@@ -106,34 +108,48 @@ function Cart() {
     }
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-    
+
         setInvoice((prevInvoice) => ({
             ...(prevInvoice || {}),
             [name]: type === 'select-one' ? e.target.selectedOptions[0].value : (type === 'checkbox' ? checked : value),
         }));
     };
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const invoiceData = {...invoices, userId:user.id, status:true, total:totals};
-        axiosClient.post("/Invoices", invoiceData)
-          .then(() => {
+    const handleSubmit = async () => {
+        try {
+            const invoiceData = { userId: user.id, status: false, total: totals };
+            const response = await axiosClient.post("/Invoices", invoiceData);
+    
+            const invoiceDetailData = carts
+                .filter((item) => item.userId === user.id)
+                .map((item) => ({
+                    invoiceId: response.data.id,
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    unitPrice: item.product.price
+                }));
+    
+            await axiosClient.post("/InvoiceDetails", invoiceDetailData);
+    
             Swal.fire({
                 title: "Thành công!",
                 text: "Đặt hàng thành công",
                 icon: "success",
                 confirmButtonText: "OK",
             });
+    
             handleClose();
-          })
-          .catch((error) => {
+        } catch (error) {
+            console.error('Error creating invoice:', error);
+    
             Swal.fire({
                 title: "Lỗi!",
-                text: "Vui lòng nhập đầy đủ thông tin",
+                text: "Đã xảy ra lỗi khi đặt hàng",
                 icon: "error",
                 confirmButtonText: "OK",
             });
-          });
-      };
+        }
+    };
+    
 
     return (
         <>
@@ -156,11 +172,12 @@ function Cart() {
                         {
                             carts.map((item) => {
                                 if (item.userId === user.id) {
+                                    count++;
                                     return (
                                         <tr>
                                             <td><img className='img-cart-item' src={`https://localhost:7258/images/product/${item.product.imageId}.jpg`} /></td>
                                             <td><p>{item.product.clothes.name}</p></td>
-                                            <td><p>{item.product.price}</p></td>
+                                            <td><p>{item.product.price} VNĐ</p></td>
                                             <td><p>{item.product.size.name}</p></td>
                                             <td><p>{item.product.color.name}</p></td>
                                             <td>
@@ -168,19 +185,19 @@ function Cart() {
                                                 <input className='w-25' type='text' value={item.quantity} readOnly />
                                                 <Button onClick={() => addStock(item.id, item.quantity, item.productId, item.product.stock)} variant='outline-none'><i class="fa-solid fa-plus"></i></Button>
                                             </td>
-                                            <td><p>{item.product.price * item.quantity}</p></td>
+                                            <td><p>{item.product.price * item.quantity} VNĐ</p></td>
                                             <td><Button variant='danger' onClick={() => handleDeleteConfirmation(item.id)}><i class="fa-solid fa-trash"></i></Button></td>
                                         </tr>
                                     )
                                 }
                             })
                         }
-                        <h1>Tổng tiền: {totals}</h1>
                     </tbody>
-                    <Button variant="danger" onClick={handleShow} className='px-5'>
-                        Đặt hàng
-                    </Button>
                 </Table>
+                <h1>{count > 0 ? "Tổng tiền: " + totals+" VNĐ" : " "}</h1>
+                {count > 0 ? <Button variant="danger" onClick={handleShow} className='px-5'>
+                    Đặt hàng
+                </Button> : <div className='statusCart'><BsCartX /></div>}
                 <Modal show={show} onHide={handleClose}>
                     <Modal.Header closeButton>
                         <Modal.Title>Nhập thông tin hóa đơn</Modal.Title>
@@ -245,7 +262,7 @@ function Cart() {
                             Hủy
                         </Button>
                         <Button variant="success" onClick={handleSubmit}>
-                            Thanh toán
+                            Tạo
                         </Button>
                     </Modal.Footer>
                 </Modal>

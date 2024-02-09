@@ -25,7 +25,8 @@ namespace API_Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Comment>>> GetComment()
         {
-            return await _context.Comment.ToListAsync();
+            return await _context.Comment.Include(p => p.ParentComment)
+                                        .ToListAsync();
         }
 
         // GET: api/Comments/5

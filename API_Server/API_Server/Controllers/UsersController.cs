@@ -1,8 +1,11 @@
-﻿using API_Server.Models;
+﻿using API_Server.Data;
+using API_Server.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -15,13 +18,34 @@ namespace EshopIdentity.Controllers
 	{
 		private readonly UserManager<User> _userManager;
 		private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly API_ServerContext _context;
 		private readonly IConfiguration _configuration;
 
-		public UsersController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+		public UsersController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, API_ServerContext context)
 		{
 			_userManager = userManager;
 			_roleManager = roleManager;
 			_configuration = configuration;
+			_context = context;
+
+		}
+
+		[HttpGet("{id}")]
+		public async Task<ActionResult<IEnumerable<User>>> GetUser(string id)
+		{
+			var user = await _context.Users.FindAsync(id);
+
+			if (user == null)
+			{
+				return NotFound();
+			}
+
+			var userDto = new
+			{
+				FullName = user.FullName
+			};
+
+			return Ok(userDto);
 		}
 
 		[HttpPost]

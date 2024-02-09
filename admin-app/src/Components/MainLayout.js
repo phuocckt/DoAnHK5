@@ -11,13 +11,13 @@ import { BiCategoryAlt, BiFontSize } from "react-icons/bi";
 import { FaClipboardList } from "react-icons/fa6";
 import { FaBlogger } from "react-icons/fa";
 import { ImBlog } from "react-icons/im";
-import { IoIosNotifications } from "react-icons/io";
 import { Layout, Menu, Button, theme } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useUser } from './UserContext';
 const { Header, Sider, Content } = Layout;
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [showStatus, setShowStatus] = useState(false);
   const { updateUser } = useUser();
   const {
     token: { colorBgContainer },
@@ -33,13 +33,19 @@ const MainLayout = () => {
 
     // ... Các công việc khác sau khi có thông tin người dùng
   }, []);
+
+  const handleLogoutClick = () => {
+    localStorage.removeItem('id', "fullname", "accessToken");
+    window.location.href = '/';
+  };
+
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical">
           <h2 className='text-white fs-5 text-center py-2 mb-0'>
             <a href='/admin'><span className='sm-logo'>AD</span>
-            <span className='lg-logo'>Admin</span></a>
+              <span className='lg-logo'>Admin</span></a>
           </h2>
         </div>
         <Menu
@@ -53,16 +59,6 @@ const MainLayout = () => {
             }
           }}
           items={[
-            {
-              key: '',
-              icon: <AiOutlineDashboard className='fs-4' />,
-              label: 'Dashboard',
-            },
-            {
-              key: 'customers',
-              icon: <AiOutlineUser className='fs-4' />,
-              label: 'Customers',
-            },
             {
               key: 'Product Management',
               icon: <AiOutlineShoppingCart className='fs-4' />,
@@ -104,39 +100,7 @@ const MainLayout = () => {
               key: 'orders',
               icon: <FaClipboardList className='fs-4' />,
               label: 'Orders',
-            },
-            {
-              key: 'blog',
-              icon: <FaBlogger className='fs-4' />,
-              label: 'Blogs',
-              children: [
-                {
-                  key: 'add-blog',
-                  icon: <ImBlog className='fs-4' />,
-                  label: 'Add Blog',
-                },
-                {
-                  key: 'blog',
-                  icon: <FaBlogger className='fs-4' />,
-                  label: 'Blog',
-                },
-                {
-                  key: 'add-blog-category',
-                  icon: <ImBlog className='fs-4' />,
-                  label: 'Add Blog Category',
-                },
-                {
-                  key: 'blog-category',
-                  icon: <FaBlogger className='fs-4' />,
-                  label: 'Blog Category',
-                }
-              ]
-            },
-            {
-              key: 'enquiries',
-              icon: <FaClipboardList className='fs-4' />,
-              label: 'Enquiries',
-            },
+            }
           ]}
         />
       </Sider>
@@ -159,12 +123,13 @@ const MainLayout = () => {
             }}
           />
           <div className='d-flex gap-3 align-items-center'>
-            <div className='position-relative'>
-              <IoIosNotifications className='fs-4' />
-              <span className='badge bg-warning rounded-circle p-1 position-absolute'>3</span>
-            </div>
             <div className='d-flex gap-3 align-items-center m-3'>
-              <h5 className='name'>{user.fullname}</h5>
+              <div className='status'>
+                <a onClick={() => setShowStatus(!showStatus)}>{user.fullname}</a>
+                {showStatus && (
+                  <a onClick={handleLogoutClick}> | Logout</a>
+                )}
+              </div>
             </div>
           </div>
         </Header>

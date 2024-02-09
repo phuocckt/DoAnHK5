@@ -14,6 +14,7 @@ function Product() {
   const [sizes, setSizes] = useState([]);
   const [colors, setColors] = useState([]);
   const [image, setImage] = useState(null);
+  let getClothesId = 0;
   const { updateUser } = useUser();
   const {
     token: { colorBgContainer },
@@ -148,6 +149,7 @@ function Product() {
                   products.map((item,i,arr)=>{
                     const abc = arr.findIndex(prev => prev.imageId === item.imageId) === i;
                     if(item.clothesId === product.clothesId && abc){
+                      getClothesId=item.clothesId;
                       return <div className="border" onClick={handleClick(item)}><img src={`https://localhost:7258/images/product/${item.imageId}.jpg`} /></div>;
                     }  
                   })
@@ -177,7 +179,7 @@ function Product() {
                 <p>(999)</p>
               </div>
               <div className='price'>
-                <div className='new-price'>${product.price}</div>
+                <div className='new-price'>{product.price} VNĐ</div>
               </div>
                 {
                   clothes.map((item,i)=>{
@@ -221,35 +223,9 @@ function Product() {
           </div>
         </div>
 
-        <Comment />
+        <Comment clothesId={getClothesId}/>
     </>
   ); 
-// function Product(props) {
-//   const [products, setProducts] = useState([]);
-//   useEffect(() => {
-//     axiosClient.get("/Products")
-//       .then(res => {
-//         setProducts(res.data)
-//       });
-//   }, []);
-
-//   const {productId} = useParams();
-//   const id = products.find((e)=>e.id === Number(productId))
-  
-//   const [product, setProduct] = useState({});
-//   useEffect(() => {
-//     axiosClient.get(`/Products/${id}`)
-//       .then(res => {
-//         setProduct(res.data)
-//       });
-//   }, []);
-//   console.log(products);
-
-//   return (
-//     <>
-//         <ItemDetail product={product} />  
-//     </>
-//   );
- }
+}
 
 export default Product;

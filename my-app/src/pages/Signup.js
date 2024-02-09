@@ -47,6 +47,7 @@ function Signup() {
             <h1>Sign up</h1>
             <form>
                 <input type='text' placeholder='Your name' name='Username' onChange={handleChange} required/>
+                <input type='text' placeholder='Full name' name='FullName' onChange={handleChange} required/>
                 <input type='email' placeholder='Email address' name='Email' onChange={handleChange} required/>
                 <input type='password' placeholder='Enter the Password' name='Password' onChange={handleChange} required/>
                 <input type='password' placeholder='Enter the Repassword' name='Repassword' onChange={handleChange} required/>

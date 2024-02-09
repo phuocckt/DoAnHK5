@@ -5,3 +5,8 @@
 .img-cart-item{
     width: 80px;
 }
+.statusCart{
+    display: flex;
+    justify-content: center;
+    font-size: 5em;
+}
