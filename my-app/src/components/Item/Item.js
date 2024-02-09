@@ -62,7 +62,7 @@ function Item(props) {
           </div>
           <div className='utilities'>
             <i
-              onClick={() => (!isFavorited) ? addFavorite(props.id) : moveFavorite(props.id)}
+              onClick={() => (!isFavorited) ? addFavorite(props.productId) : moveFavorite(props.id)}
               className={isFavorited ? "fa-solid fa-heart text-danger" : "fa-regular fa-heart"}
             ></i>
             <i className="fa-regular fa-comment"></i>
